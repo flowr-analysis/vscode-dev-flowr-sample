@@ -1,0 +1,407 @@
+{
+  "name": "vscode-flowr",
+  "publisher": "code-inspect",
+  "displayName": "R Code Analyzer (flowR)",
+  "description": "Slicing and analyzing R code courtesy of flowR",
+  "homepage": "https://github.com/flowr-analysis/vscode-flowr/blob/main/README.md",
+  "icon": "media/flowR.png",
+  "type": "commonjs",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/flowr-analysis/vscode-flowr"
+  },
+  "bugs": {
+    "url": "https://github.com/flowr-analysis/vscode-flowr/issues",
+    "email": "florian.sihler@uni-ulm.de"
+  },
+  "license": "GPL-3.0",
+  "version": "0.5.4",
+  "engines": {
+    "vscode": "^1.60.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Visualization"
+  ],
+  "keywords": [
+    "flowR",
+    "R"
+  ],
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "browser": "./dist/web/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "vscode-flowr.internal.goto.dependency",
+        "title": "Go to Dependency",
+        "category": "flowR",
+        "icon": "$(link)",
+        "enablement": "sideBarFocus"
+      },
+      {
+        "command": "vscode-flowr.settings.open",
+        "title": "Open flowR Settings",
+        "category": "flowR",
+        "icon": "$(gear)"
+      },
+      {
+        "command": "vscode-flowr.internal.slice.dependency",
+        "title": "Show Slice of Dependency",
+        "category": "flowR",
+        "icon": "$(graph)",
+        "enablement": "sideBarFocus"
+      },
+      {
+        "command": "vscode-flowr.repl",
+        "title": "Launch a new flowR REPL",
+        "icon": "$(terminal)",
+        "category": "flowR",
+        "enablement": "!isWeb"
+      },
+      {
+        "command": "vscode-flowr.ast",
+        "title": "Show Abstract Syntax Tree of the File",
+        "icon": "$(graph)",
+        "category": "flowR"
+      },
+      {
+        "command": "vscode-flowr.cfg",
+        "title": "Show Control Flow Graph of the File",
+        "icon": "$(graph)",
+        "category": "flowR"
+      },
+      {
+        "command": "vscode-flowr.slice.cursor",
+        "title": "Slice for Cursor Position",
+        "icon": "$(search)",
+        "category": "flowR"
+      },
+      {
+        "command": "vscode-flowr.slice.position",
+        "title": "Toggle Continuous Slice at Current Position",
+        "category": "flowR"
+      },
+      {
+        "command": "vscode-flowr.slice.follow.cursor",
+        "title": "Toggle Continuous Slice at Cursor",
+        "category": "flowR"
+      },
+      {
+        "command": "vscode-flowr.slice.show.in.editor",
+        "title": "Show Current Slice in Editor (Reconstruct)",
+        "category": "flowR"
+      },
+      {
+        "command": "vscode-flowr.slice.clear",
+        "title": "Clear Current Slice Presentation",
+        "icon": "$(refresh)",
+        "category": "flowR"
+      },
+      {
+        "command": "vscode-flowr.dataflow",
+        "title": "Show Dataflow Graph",
+        "icon": "$(graph)",
+        "category": "flowR"
+      },
+      {
+        "command": "vscode-flowr.session.internal",
+        "title": "Start Local flowR Shell",
+        "icon": "$(terminal)",
+        "category": "flowR",
+        "enablement": "shellExecutionSupported"
+      },
+      {
+        "command": "vscode-flowr.session.connect",
+        "title": "Connect to flowR Server",
+        "icon": "$(server)",
+        "category": "flowR"
+      },
+      {
+        "command": "vscode-flowr.session.disconnect",
+        "title": "Disconnect from flowR Server",
+        "icon": "$(server)",
+        "category": "flowR"
+      },
+      {
+        "command": "vscode-flowr.report",
+        "title": "Report Issue (Opens Browser)",
+        "icon": "$(bug)",
+        "category": "flowR"
+      }
+    ],
+    "configuration": {
+      "title": "R Code Analyzer (flowR)",
+      "properties": {
+        "vscode-flowr.server.host": {
+          "type": "string",
+          "default": "localhost",
+          "markdownDescription": "The host to use when connecting to a [flowR server](https://github.com/flowr-analysis/flowr/wiki/Interface#-communicating-with-the-server)."
+        },
+        "vscode-flowr.server.port": {
+          "type": "number",
+          "default": 1042,
+          "markdownDescription": "The port to use when connecting to a [flowR server](https://github.com/flowr-analysis/flowr/wiki/Interface#-communicating-with-the-server)."
+        },
+        "vscode-flowr.server.autoConnect": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "Whether to auto-connect to a [flowR server](https://github.com/flowr-analysis/flowr/wiki/Interface#-communicating-with-the-server) when the extension is loaded."
+        },
+        "vscode-flowr.server.connectionType": {
+          "type": "string",
+          "default": "auto",
+          "enum": [
+            "auto",
+            "websocket",
+            "websocket-secure",
+            "tcp"
+          ],
+          "enumDescriptions": [
+            "The extension attempts to connect via websocket and automatically falls back to a TCP connection.",
+            "The extension connects to a flowR server via websocket (for a server started using --ws).",
+            "The extension connects to a flowR server via websocket over SSL/TLS (for a server started using --ws).",
+            "The extension connects to a flowR server via TCP."
+          ],
+          "markdownDescription": "The connection type that should be used when connecting to a [flowR server](https://github.com/flowr-analysis/flowr/wiki/Interface#-communicating-with-the-server). When running the extension in the browser, settings other than `websocket` and `websocket-secure` are ignored, as websocket mode is always used."
+        },
+        "vscode-flowr.r.executable": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "An absolute path to the R binary to use for the local shell. If this is empty, R is expected to be part of the system's PATH. This setting is ignored when running the extension in the browser, as tree-sitter mode is always used."
+        },
+        "vscode-flowr.r.engine": {
+          "type": "string",
+          "default": "tree-sitter",
+          "enum": [
+            "tree-sitter",
+            "r-shell"
+          ],
+          "markdownDescription": "The flowR engine to use when parsi5ng R code. For more information, see the [engines documentation](https://github.com/flowr-analysis/flowr/wiki/Engines). This setting is ignored when running the extension in the browser, as tree-sitter mode is always used."
+        },
+        "vscode-flowr.style.sliceOpacity": {
+          "type": "number",
+          "default": 0.25,
+          "minimum": 0,
+          "maximum": 1,
+          "markdownDescription": "The opacity that code which isn't part of the current slice should have, between 0 (invisible) and 1 (opaque)."
+        },
+        "vscode-flowr.style.sliceDisplay": {
+          "type": "string",
+          "default": "text",
+          "enum": [
+            "text",
+            "diff",
+            "tokens"
+          ],
+          "enumDescriptions": [
+            "Code that isn't part of the current slice will be grayed out in the active editor.",
+            "Open a diff view that shows the current slice and the rest of the file.",
+            "Highlight the tokens that are part of the current slice."
+          ],
+          "markdownDescription": "The way that slices should be displayed."
+        },
+        "vscode-flowr.style.tokenBackgroundColor": {
+          "type": "string",
+          "default": "rgba(0, 127, 0, 0.5)",
+          "markdownDescription": "The background color for highlighted tokens. This can be any valid CSS color, e.g. `#ff0000`, `rgb(255, 0, 0)`,`rgba(0, 127, 0, 0.5)`, `green`. Theme colors can be used as described [here](https://code.visualstudio.com/api/extension-guides/webview#theming-webview-content), e.g. `var(--vscode-editor-selectionBackground)`."
+        },
+        "vscode-flowr.style.onlyHighlightActiveSelection": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "Whether to only highlight the selection in the active editor."
+        },
+        "vscode-flowr.style.mermaidMaxTextLength": {
+          "type": "number",
+          "default": 500000,
+          "markdownDescription": "The maximum amount of characters that a Mermaid graph can contain to be parsed and displayed."
+        },
+        "vscode-flowr.dependencyView.autoReveal": {
+          "type": "integer",
+          "default": 10,
+          "minimum": 0,
+          "maximum": 999,
+          "markdownDescription": "If there are less than or equal the given dependencies in the dependency view, reveal them automatically."
+        },
+        "vscode-flowr.dependencyView.updateType": {
+          "type": "string",
+          "default": "interval",
+          "enum": [
+            "on change",
+            "interval",
+            "on save",
+            "never"
+          ],
+          "markdownEnumDescriptions": [
+            "Update the dependency view on every change in the active editor.",
+            "Update the dependency every n seconds, see `vscode-flowr.dependencyView.updateInterval`.",
+            "Update the dependency view only when the active editor is saved.",
+            "Never update the dependency view automatically."
+          ],
+          "markdownDescription": "When to update the dependency view."
+        },
+        "vscode-flowr.dependencyView.updateInterval": {
+          "type": "number",
+          "default": 10,
+          "minimum": 0.5,
+          "maximum": 999,
+          "markdownDescription": "Automatically update the dependency view every n seconds."
+        },
+        "vscode-flowr.dependencyView.keepOnError": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Should the dependency view freeze when the code contains errors? If so, it will automatically retry on the next update (see `vscode-flowr.dependencyView.updateType`)."
+        },
+        "vscode-flowr.verboseLog": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "Whether to use verbose logging while flowR is active."
+        },
+        "vscode-flowr.errorMessage.Timer": {
+          "type": "number",
+          "default": 5000,
+          "minimum": 0,
+          "markdownDescription": "The time in milliseconds after which an error message will be removed from the status bar."
+        }
+      }
+    },
+    "menus": {
+      "editor/context": [
+        {
+          "command": "vscode-flowr.slice.position",
+          "when": "resourceLangId == r"
+        },
+        {
+          "command": "vscode-flowr.slice.cursor",
+          "when": "resourceLangId == r"
+        },
+        {
+          "command": "vscode-flowr.slice.clear",
+          "when": "resourceLangId == r"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "vscode-flowr.internal.slice.dependency",
+          "when": "view == flowr-dependencies && viewItem == dependency",
+          "group": "flowR"
+        },
+        {
+          "command": "vscode-flowr.internal.goto.dependency",
+          "when": "view == flowr-dependencies && viewItem == dependency",
+          "group": "flowR"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "vscode-flowr.repl",
+          "when": "view == flowr-dependencies && !isWeb",
+          "group": "navigation"
+        },
+        {
+          "command": "vscode-flowr.settings.open",
+          "when": "view == flowr-dependencies",
+          "group": "navigation@2"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "flowr",
+          "title": "flowR",
+          "icon": "resources/flowR.svg"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "flowr-dependencies",
+        "contents": "Welcome to flowR!\nOpen an R file to see its dependencies."
+      }
+    ],
+    "views": {
+      "flowr": [
+        {
+          "id": "flowr-dependencies",
+          "name": "Dependencies"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "vscode-flowr.slice.position",
+        "key": "alt+p",
+        "when": "resourceLangId == r"
+      },
+      {
+        "command": "vscode-flowr.slice.cursor",
+        "key": "alt+s",
+        "when": "resourceLangId == r"
+      },
+      {
+        "command": "vscode-flowr.slice.clear",
+        "key": "alt+c",
+        "when": "resourceLangId == r"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile && npm run package-web",
+    "copy-wasm": "mkdir -p out/flowr/tree-sitter && cp src/flowr/tree-sitter/*.wasm out/flowr/tree-sitter && mkdir -p node_modules/@eagleoutice/flowr/r-bridge/lang-4.x/tree-sitter/ && cp src/flowr/tree-sitter/*.wasm node_modules/@eagleoutice/flowr/r-bridge/lang-4.x/tree-sitter/",
+    "compile": "npm run copy-wasm && tsc -p ./",
+    "watch": "npm run copy-wasm && tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "npx eslint src/",
+    "test": "vscode-test",
+    "generate-changelog": "git log ...$(git tag | tail -n 1) --pretty=format:'- %s' --reverse",
+    "browser": "vscode-test-web --extensionDevelopmentPath=. .",
+    "copy-wasm-web": "mkdir -p dist/web && cp src/flowr/tree-sitter/*.wasm dist/web",
+    "compile-web": "npm run copy-wasm-web && webpack",
+    "package-web": "npm run copy-wasm-web && webpack --mode production --devtool hidden-source-map",
+    "watch-web": "npm run copy-wasm-web && webpack --watch"
+  },
+  "dependencies": {
+    "@eagleoutice/flowr": "^2.2.5",
+    "assert": "^2.1.0",
+    "browserify-zlib": "^0.2.0",
+    "constants-browserify": "^1.0.0",
+    "os-browserify": "^0.3.0",
+    "path-browserify": "^1.0.1",
+    "readline": "^1.3.0",
+    "readline-browser": "^0.0.3",
+    "readline-sync": "^1.4.10",
+    "semver": "^7.7.1",
+    "stream-browserify": "^3.0.0",
+    "timers-browserify": "^2.0.12",
+    "util": "^0.12.5",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@eagleoutice/eslint-config-flowr": "^1.0.17",
+    "@eslint/eslintrc": "^3.2.0",
+    "@eslint/js": "^9.20.0",
+    "@types/mocha": "^10.0.6",
+    "@types/node": "22.x",
+    "@types/semver": "^7.5.8",
+    "@types/vscode": "^1.60.0",
+    "@types/webpack-env": "^1.16.0",
+    "@types/ws": "^8.5.10",
+    "@vscode/test-cli": "^0.0.6",
+    "@vscode/test-electron": "^2.3.9",
+    "@vscode/test-web": "^0.0.60",
+    "copy-webpack-plugin": "^12.0.2",
+    "ts-loader": "^9.2.2",
+    "typescript": "^5.6.2",
+    "webpack": "^5.38.1",
+    "webpack-cli": "^4.7.0"
+  },
+  "eslintConfig": {
+    "extends": [
+      "@eagleoutice/eslint-config-flowr"
+    ],
+    "rules": {
+      "tsdoc/syntax": "off"
+    }
+  }
+}
