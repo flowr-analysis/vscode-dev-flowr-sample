@@ -1,6 +1,6 @@
-# *flowR* VS Code.dev Sample
+# *flowR* VS Code Sample
 
-This is a template repository that you can use to try out the *flowR* extension for Visual Studio Code right in your browser using [VS Code.dev](https://vscode.dev/). You don't even need to create your own repository!
+This is a sample repository that you can use to try out the *flowR* extension for Visual Studio Code right in your browser using [VS Code.dev](https://vscode.dev/), or using VS Code locally.
 
 <div align = center>
 <br>
@@ -13,6 +13,8 @@ This is a template repository that you can use to try out the *flowR* extension 
 ## How to Use
 
 To set up your own *flowR* workspace, simply click the button above. When you open one of the R files provided as part of the sample, the site will ask you to install the *flowR* extension through a popup in the bottom-right corner. Select it and accept the approval popup to install the *flowR* extension. Once the extension is installed, you can get started using *flowR*!
+
+Alternatively, you can also clone this repository locally and open it with VS Code. Similarly to VS Code.dev, you will be prompted to install the *flowR* extension locally. Follow the same steps and you're ready to go!
 
 ## Things to Try
 
