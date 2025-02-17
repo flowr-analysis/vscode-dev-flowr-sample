@@ -12,7 +12,7 @@ This is a template repository that you can use to try out the *flowR* extension 
 
 ## How to Use
 
-To set up your own *flowR* workspace, simply click the button above. The site will take a few seconds to set up and ask you to install the *flowR* extension through a popup in the bottom-right corner. Once the extension is installed, you can get started using *flowR*!
+To set up your own *flowR* workspace, simply click the button above. When you open one of the R files provided as part of the sample, the site will ask you to install the *flowR* extension through a popup in the bottom-right corner. Select it and accept the approval popup to install the *flowR* extension. Once the extension is installed, you can get started using *flowR*!
 
 ## Things to Try
 
@@ -24,7 +24,7 @@ The extension has a lot more features to try! For a more extensive list, check o
 
 ### Example Use-Cases
 
-This codespace contains some randomly selected R files under [`./sample-files`](./sample-files/) you can use to play around - or use your own R files!
+This sample contains some randomly selected R files under [`./sample-files`](./sample-files/) you can use to play around - or use your own R files!
 We have only modified these files to contain a meta-informational comment at the top, pointing to the full record.
 
 1. Reviewing and comprehending existing R scripts
